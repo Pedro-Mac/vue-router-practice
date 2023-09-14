@@ -1,6 +1,11 @@
 <template>
     <div>
         <p v-if="user.username">{{ user.username }}</p>
+        <div v-if="hasPhotos">
+            <div v-for="photo in photos" :key="photo.id" class="">
+                <img :src="photo.urls.small" :alt="photo.alt_description">
+            </div>
+        </div>
 
     </div>
 </template>
@@ -18,10 +23,16 @@ export default {
     },
 
     async created() {
-        const res = await fetch(`https://api.unsplash.com/photos/?client_id=${token}&page=1`)
+        const res = await fetch(`https://api.unsplash.com/photos/?client_id=${token}&page=${Math.ceil(Math.random() * 10)}&per_page=4&orientation=portrait`)
         const resData = await res.json()
-        this.photos = resData
+        this.photos = [...resData, ...resData]
 
+    },
+
+    computed: {
+        hasPhotos() {
+            return this.photos.length > 0
+        }
     }
 }
 </script>
