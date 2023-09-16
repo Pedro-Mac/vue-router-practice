@@ -19,8 +19,15 @@ export default {
         }
     },
 
+    created() {
+        const username = this.getUsername()
+
+        if (username) this.$router.push("/game")
+    },
+
     methods: {
         ...mapActions(useUserState, ['setUsername']),
+        ...mapActions(useUserState, ['getUsername']),
 
         startGame() {
             this.setUsername(this.username)
