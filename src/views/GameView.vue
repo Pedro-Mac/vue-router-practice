@@ -1,10 +1,13 @@
 <template>
     <div>
         <p v-if="user.username">{{ user.username }}</p>
-        <div v-if="hasPhotos">
+        <p v-if="isLoading">Loading...</p>
+        <p v-else-if="error">{{ error }}</p>
+        <div v-else="hasPhotos">
             <div class="grid">
-                <div v-for="photo in photos" :key="photo.id" class="photo-container">
-                    <img :src="photo.urls.small" :alt="photo.alt_description">
+                <div v-for="photo in photos" :key="photo.id">
+                    <p v-if="photo.isMatched">Is matched</p>
+                    <img :src="photo.src.tiny" :alt="photo.alt_description" @click="selectPhoto(photo)">
                 </div>
             </div>
         </div>
@@ -14,21 +17,21 @@
 
 <script>
 import { useUserState } from '../store/user'
-const token = import.meta.env.VITE_UNSPLASH_KEY
+import { getPhotos } from '../services/photos'
 
 export default {
     data() {
         return {
             user: useUserState(),
             photos: [],
+            isLoading: false,
+            error: '',
+            selectedPhotos: [],
         }
     },
 
-    async created() {
-        const res = await fetch(`https://api.unsplash.com/photos/?client_id=${token}&page=${Math.ceil(Math.random() * 10)}&per_page=4&orientation=portrait&w=240&h=320&fit=crop`)
-        const resData = await res.json()
-        this.photos = this.shufflePhotos([...resData, ...resData.map(photo => ({ ...photo, id: photo.id.split("").reverse().join("") }))])
-
+    mounted() {
+        this.fetchPhotos()
     },
 
     computed: {
@@ -36,7 +39,6 @@ export default {
             return this.photos.length > 0
         }
     },
-
     methods: {
         shufflePhotos(arr) {
             for (let i = arr.length - 1; i > 0; i--) {
@@ -47,6 +49,52 @@ export default {
             }
 
             return arr
+        },
+
+        fetchPhotos() {
+            this.isLoading = true
+            this.error = ''
+
+            getPhotos()
+                .then(({ photos }) => {
+                    const shuffledPhotos = this.shufflePhotos([...photos, ...photos.map(photo => ({ ...photo, id: photo?.id.toString().split("").reverse().join("") }))])
+                    this.photos = shuffledPhotos.map(item => ({ ...item, isMatched: false }));
+                })
+                .catch(error => {
+                    this.error = error.message
+                })
+                .finally(() => {
+                    this.isLoading = false
+                })
+        },
+
+        selectPhoto(photo) {
+            if (this.selectedPhotos.length === 0) {
+                this.selectedPhotos = [photo]
+            } else if (this.selectedPhotos.length === 1) {
+                this.selectedPhotos = [...this.selectedPhotos, photo]
+            }
+
+        }
+    },
+
+    watch: {
+        selectedPhotos() {
+            const [firstPhotoPick, secondPhotoPick] = this.selectedPhotos
+
+            if (firstPhotoPick && secondPhotoPick && firstPhotoPick.url === secondPhotoPick.url) {
+                const filteredFotos = this.photos.map(photo => {
+                    if (photo.id === firstPhotoPick.id || photo.id === secondPhotoPick.id) {
+                        return { ...photo, isMatched: true }
+                    } else {
+                        return photo
+                    }
+                })
+
+                this.photos = filteredFotos
+            }
+
+            if (firstPhotoPick && secondPhotoPick) this.selectedPhotos = []
         }
     }
 }
@@ -58,10 +106,5 @@ export default {
     grid-template-columns: repeat(4, 1fr);
     column-gap: 1rem;
     row-gap: 1rem;
-}
-
-.photo-container {
-    width: 240px;
-    height: 320px;
 }
 </style>
