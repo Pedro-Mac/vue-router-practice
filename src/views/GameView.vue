@@ -13,6 +13,8 @@
             </div>
         </div>
 
+        <button @click="handleLogout">Log out</button>
+
     </div>
 </template>
 
@@ -31,7 +33,10 @@ export default {
         }
     },
 
-    mounted() {
+    created() {
+        const userState = useUserState()
+        if (userState.username === '') this.$router.push('/')
+
         this.fetchPhotos()
     },
 
@@ -54,6 +59,11 @@ export default {
             }
 
             return arr
+        },
+
+        handleLogout() {
+            this.$router.push('/')
+            localStorage.removeItem("username")
         },
 
         fetchPhotos() {

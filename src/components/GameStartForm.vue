@@ -20,7 +20,8 @@ export default {
     },
 
     created() {
-        const username = this.getUsername()
+        const userState = useUserState()
+        const username = userState.logoutUser()
 
         if (username) this.$router.push("/game")
     },
@@ -28,6 +29,7 @@ export default {
     methods: {
         ...mapActions(useUserState, ['setUsername']),
         ...mapActions(useUserState, ['getUsername']),
+        ...mapActions(useUserState, ['logoutUser']),
 
         startGame() {
             this.setUsername(this.username)
