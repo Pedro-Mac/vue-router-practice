@@ -7,6 +7,7 @@
             <div class="grid">
                 <div v-for="photo in photos" :key="photo.id">
                     <p v-if="photo.isMatched">Is matched</p>
+                    <p v-else-if="isSelected(photo.id)">Is selected</p>
                     <img :src="photo.src.tiny" :alt="photo.alt_description" @click="selectPhoto(photo)">
                 </div>
             </div>
@@ -37,9 +38,13 @@ export default {
     computed: {
         hasPhotos() {
             return this.photos.length > 0
-        }
+        },
+
     },
     methods: {
+        isSelected(id) {
+            return this.selectedPhotos.some(photo => photo.id === id)
+        },
         shufflePhotos(arr) {
             for (let i = arr.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
