@@ -14,6 +14,7 @@ export const useUserState = defineStore("user", {
         getUsername(){
             const username = localStorage.getItem("username")
 
+            console.log({username});
             if(username) {
                 this.username = username;
                 return username
@@ -21,6 +22,7 @@ export const useUserState = defineStore("user", {
         },
 
         logoutUser(){
+            console.log('iscalled');
             this.username = ""
             localStorage.removeItem("username")
         }

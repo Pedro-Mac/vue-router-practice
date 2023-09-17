@@ -6,9 +6,7 @@
         <div v-else="hasPhotos">
             <div class="grid">
                 <div v-for="photo in photos" :key="photo.id">
-                    <p v-if="photo.isMatched">Is matched</p>
-                    <p v-else-if="isSelected(photo.id)">Is selected</p>
-                    <img :src="photo.src.tiny" :alt="photo.alt_description" @click="selectPhoto(photo)">
+                    <GameImage :photo="photo" :selectPhoto="selectPhoto" :isSelected="isSelected(photo.id)" />
                 </div>
             </div>
         </div>
@@ -19,6 +17,7 @@
 </template>
 
 <script>
+import GameImage from '../components/GameView/GameImage.vue'
 import { useUserState } from '../store/user'
 import { getPhotos } from '../services/photos'
 
@@ -35,9 +34,12 @@ export default {
 
     created() {
         const userState = useUserState()
-        if (userState.username === '') this.$router.push('/')
+        if (userState.username === '') {
+            this.$router.push('/')
+        } else {
+            this.fetchPhotos()
+        }
 
-        this.fetchPhotos()
     },
 
     computed: {
@@ -62,8 +64,10 @@ export default {
         },
 
         handleLogout() {
-            this.$router.push('/')
-            localStorage.removeItem("username")
+            const userState = useUserState()
+
+            userState.logoutUser();
+            this.$router.push('/');
         },
 
         fetchPhotos() {
@@ -111,6 +115,10 @@ export default {
 
             if (firstPhotoPick && secondPhotoPick) this.selectedPhotos = []
         }
+    },
+
+    components: {
+        GameImage
     }
 }
 </script>

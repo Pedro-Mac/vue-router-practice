@@ -21,7 +21,7 @@ export default {
 
     created() {
         const userState = useUserState()
-        const username = userState.logoutUser()
+        const username = userState.getUsername()
 
         if (username) this.$router.push("/game")
     },
