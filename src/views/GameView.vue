@@ -97,7 +97,7 @@ export default {
         selectedPhotos() {
             const [firstPhotoPick, secondPhotoPick] = this.selectedPhotos
 
-            if (firstPhotoPick && secondPhotoPick && firstPhotoPick.url === secondPhotoPick.url) {
+            if (firstPhotoPick && secondPhotoPick && firstPhotoPick.url === secondPhotoPick.url && firstPhotoPick.id !== secondPhotoPick.id) {
                 const filteredFotos = this.photos.map(photo => {
                     if (photo.id === firstPhotoPick.id || photo.id === secondPhotoPick.id) {
                         return { ...photo, isMatched: true }
