@@ -113,7 +113,11 @@ export default {
                 this.photos = filteredFotos
             }
 
-            if (firstPhotoPick && secondPhotoPick) this.selectedPhotos = []
+            if (firstPhotoPick && secondPhotoPick) {
+                setTimeout(() => {
+                    this.selectedPhotos = []
+                }, 300)
+            }
         }
     },
 
