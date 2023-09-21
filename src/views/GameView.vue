@@ -6,13 +6,14 @@
         <div v-else="hasPhotos">
             <div class="grid">
                 <div v-for="photo in photos" :key="photo.id">
-                    <GameImage :photo="photo" :selectPhoto="selectPhoto" :isSelected="isSelected(photo.id)" />
+                    <GameImage :photo="photo" :select-photo="selectPhoto" :is-selected="isSelected(photo.id)" />
                 </div>
             </div>
         </div>
 
         <button @click="handleLogout">Log out</button>
-
+        <router-link to="/game/leaderboard">Leaderboard</router-link>
+        <router-view></router-view>
     </div>
 </template>
 
@@ -94,6 +95,10 @@ export default {
                 this.selectedPhotos = [...this.selectedPhotos, photo]
             }
 
+        },
+
+        navigate(path) {
+            this.$router.push({ path });
         }
     },
 

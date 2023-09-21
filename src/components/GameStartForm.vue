@@ -1,7 +1,6 @@
 <template>
     <form>
         <div class="flex-col">
-            <label for="name">Enter your name</label>
             <input id="name" type="text" placeholder="Enter your name" v-model="username" />
         </div>
         <button @click.prevent="startGame">Start game</button>
@@ -19,11 +18,14 @@ export default {
         }
     },
 
-    created() {
+    mounted() {
         const userState = useUserState()
         const username = userState.getUsername()
 
-        if (username) this.$router.push("/game")
+        if (username) {
+            this.$router.push("/game")
+
+        }
     },
 
     methods: {
