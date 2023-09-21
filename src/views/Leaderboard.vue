@@ -1,26 +1,36 @@
 <template>
-    <v-dialog width="500" v-model="a">
+    <v-dialog width="500" v-model="isOpen">
         <v-card title="Dialog">
-            <v-card-text>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-                dolore magna aliqua.
-            </v-card-text>
+            <ul>
+                <li v-for="item in list" :key="item.username">
+                    {{ item.username }}
+                </li>
+            </ul>
         </v-card>
 
     </v-dialog>
 </template>
 
 <script>
-import Modal from '../components/Modal.vue'
+import { useLeaderboardState } from '../store/leaderboard';
+
 
 export default {
     data() {
         return {
-            a: true
+            isOpen: true,
+            list: [],
         }
     },
-    components: {
-        Modal
+
+    created() {
+        this.list = useLeaderboardState().getList()
+    },
+
+    watch: {
+        isOpen(newVal, oldVal) {
+            if (newVal === false) this.$router.push('/game')
+        }
     }
 }
 </script>

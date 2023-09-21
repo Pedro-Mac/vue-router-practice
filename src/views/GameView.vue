@@ -20,6 +20,7 @@
 <script>
 import GameImage from '../components/GameView/GameImage.vue'
 import { useUserState } from '../store/user'
+import { useLeaderboardState } from '../store/leaderboard'
 import { getPhotos } from '../services/photos'
 
 export default {
@@ -103,6 +104,14 @@ export default {
     },
 
     watch: {
+        photos(newState) {
+            const leaderboardState = useLeaderboardState()
+            const isAllMatched = newState.length && newState.every(photo => photo.isMatched === true)
+            if (isAllMatched) {
+                leaderboardState.setList([...leaderboardState.list, this.user])
+                this.navigate('/game/leaderboard')
+            }
+        },
         selectedPhotos() {
             const [firstPhotoPick, secondPhotoPick] = this.selectedPhotos
 
@@ -123,7 +132,7 @@ export default {
                     this.selectedPhotos = []
                 }, 300)
             }
-        }
+        },
     },
 
     components: {
