@@ -15,7 +15,7 @@ export const useGameState = defineStore("game", {
             const game = JSON.parse(localStorage.getItem("game"))
 
             
-            if(lgameist) {
+            if(game) {
                 this.game = game;
                 return game
             }

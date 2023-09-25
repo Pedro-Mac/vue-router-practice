@@ -22,6 +22,7 @@ import GameImage from '../components/GameView/GameImage.vue'
 import { useUserState } from '../store/user'
 import { useLeaderboardState } from '../store/leaderboard'
 import { getPhotos } from '../services/photos'
+import { useGameState } from '../store/game'
 
 export default {
     data() {
@@ -106,10 +107,20 @@ export default {
     watch: {
         photos(newState) {
             const leaderboardState = useLeaderboardState()
+            const gameState = useGameState()
             const isAllMatched = newState.length && newState.every(photo => photo.isMatched === true)
+
+
+
             if (isAllMatched) {
+                gameState.setGame({ isFinished: true, photos: newState })
                 leaderboardState.setList([...leaderboardState.list, this.user])
                 this.navigate('/game/leaderboard')
+            } else {
+                gameState.setGame({
+                    photos: newState,
+                    isFinished: false
+                })
             }
         },
         selectedPhotos() {

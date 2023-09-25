@@ -6,6 +6,10 @@
                     {{ item.username }}
                 </li>
             </ul>
+
+            <v-btn v-if="isFinished">
+                Start new game
+            </v-btn>
         </v-card>
 
     </v-dialog>
@@ -13,6 +17,7 @@
 
 <script>
 import { useLeaderboardState } from '../store/leaderboard';
+import { useGameState } from '../store/game';
 
 
 export default {
@@ -20,11 +25,19 @@ export default {
         return {
             isOpen: true,
             list: [],
+            game: null
         }
     },
 
     created() {
         this.list = useLeaderboardState().getList()
+        this.game = useGameState().getGame()
+    },
+
+    computed: {
+        isFinished() {
+            return Boolean(this.game?.isFinished)
+        }
     },
 
     watch: {
